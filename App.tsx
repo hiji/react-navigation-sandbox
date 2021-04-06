@@ -1,17 +1,26 @@
-import React from 'react';
-import {Button, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, Text, TextInput, View} from 'react-native';
 import {createStackNavigator, StackScreenProps} from "@react-navigation/stack";
 import {NavigationContainer} from "@react-navigation/native";
 
 type StackParamList = {
-  Home: undefined,
-  Details: { itemId?: number, otherParam?: string }
+  Home: { post?: string } | undefined,
+  Details: { itemId?: number, otherParam?: string },
+  CreatePost: undefined,
 };
 
 type HomeScreenProps = StackScreenProps<StackParamList, 'Home'>;
 type DetailsScreenProps = StackScreenProps<StackParamList, 'Details'>;
+type CreatePostScreenProps = StackScreenProps<StackParamList, 'CreatePost'>;
 
-function HomeScreen({ navigation } : HomeScreenProps) {
+function HomeScreen({ route, navigation } : HomeScreenProps) {
+  useEffect(() => {
+    if (route.params?.post) {
+      // Post updated, do something with `route.params.post`
+      // For example, send the post to the server
+    }
+  }, [route.params?.post]);
+  
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Text>Home Screen</Text>
@@ -23,6 +32,8 @@ function HomeScreen({ navigation } : HomeScreenProps) {
           });
         }}
       />
+      <Button title="Create post" onPress={() => navigation.navigate('CreatePost')} />
+      <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text>
     </View>
   );
 }
@@ -50,6 +61,29 @@ function DetailsScreen({ route, navigation } : DetailsScreenProps) {
   );
 }
 
+function CreatePostScreen({ route, navigation }: CreatePostScreenProps) {
+  const [postText, setPostText] = useState('');
+
+  return (
+    <>
+      <TextInput
+        multiline
+        placeholder="What's on your mind?"
+        style={{ height: 200, padding: 10, backgroundColor: 'white'}}
+        value={postText}
+        onChangeText={setPostText}
+      />
+      <Button
+        title="Done"
+        onPress={() => {
+          // Pass params back to home screen
+          navigation.navigate('Home', { post: postText });
+        }}
+      />
+    </>
+  )
+}
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -58,6 +92,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Overview"}} />
         <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
+        <Stack.Screen name="CreatePost" component={CreatePostScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
