@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Text, TextInput, View} from 'react-native';
-import {createStackNavigator, StackScreenProps} from "@react-navigation/stack";
+import {Button, Image, Text, TextInput, View} from 'react-native';
+import {createStackNavigator, StackHeaderTitleProps, StackScreenProps} from "@react-navigation/stack";
 import {NavigationContainer} from "@react-navigation/native";
 
 type StackParamList = {
@@ -84,6 +84,15 @@ function CreatePostScreen({ route, navigation }: CreatePostScreenProps) {
   )
 }
 
+function LogoTitle(props: StackHeaderTitleProps) {
+  return (
+    <Image
+      style={{ width: 50, height: 50 }}
+      source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+    />
+  )
+}
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -104,7 +113,7 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "My home" }} />
+          options={{ headerTitle: props => <LogoTitle {...props} /> }} />
         <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
         <Stack.Screen name="CreatePost" component={CreatePostScreen}/>
       </Stack.Navigator>
