@@ -113,7 +113,16 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ headerTitle: props => <LogoTitle {...props} /> }} />
+          options={{
+            headerTitle: props => <LogoTitle {...props} />,
+            headerRight: () => (
+              <Button
+                onPress={() => alert('This is a button!')}
+                title="Info"
+                color="#fff"
+              />
+            ),
+          }} />
         <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
         <Stack.Screen name="CreatePost" component={CreatePostScreen}/>
       </Stack.Navigator>
