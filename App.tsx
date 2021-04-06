@@ -7,11 +7,13 @@ type StackParamList = {
   Home: { post?: string } | undefined,
   Details: { itemId?: number, otherParam?: string },
   CreatePost: undefined,
+  MyModal: undefined,
 };
 
 type HomeScreenProps = StackScreenProps<StackParamList, 'Home'>;
 type DetailsScreenProps = StackScreenProps<StackParamList, 'Details'>;
 type CreatePostScreenProps = StackScreenProps<StackParamList, 'CreatePost'>;
+type ModalScreenProps = StackScreenProps<StackParamList, 'MyModal'>;
 
 function HomeScreen({ route, navigation } : HomeScreenProps) {
   useEffect(() => {
@@ -46,6 +48,10 @@ function HomeScreen({ route, navigation } : HomeScreenProps) {
       />
       <Button title="Create post" onPress={() => navigation.navigate('CreatePost')} />
       <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text>
+      <Button
+        onPress={() => navigation.navigate('MyModal')}
+        title="Open Modal"
+      />
     </View>
   );
 }
@@ -105,33 +111,55 @@ function LogoTitle(props: StackHeaderTitleProps) {
   )
 }
 
-const Stack = createStackNavigator();
+function ModalScreen({ navigation }: ModalScreenProps) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+    </View>
+  );
+}
 
-export default function App() {
+const MainStack = createStackNavigator();
+const RootStack = createStackNavigator();
+
+
+function MainStackScreen() {
+  return (
+    <MainStack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <MainStack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={({ navigation, route }) => ({
+          headerTitle: props => <LogoTitle {...props} />,
+        })}
+      />
+      <MainStack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
+      <MainStack.Screen name="CreatePost" component={CreatePostScreen}/>
+    </MainStack.Navigator>
+  );
+}
+
+function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#f4511e',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={({ navigation, route }) => ({
-            headerTitle: props => <LogoTitle {...props} />,
-          })}
-        />
-        <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
-        <Stack.Screen name="CreatePost" component={CreatePostScreen}/>
-      </Stack.Navigator>
+      <RootStack.Navigator mode="modal" headerMode="none">
+        <RootStack.Screen name="Main" component={MainStackScreen} />
+        <RootStack.Screen name="MyModal" component={ModalScreen} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
+
+export default App;
