@@ -5,7 +5,7 @@ import {NavigationContainer} from "@react-navigation/native";
 
 type StackParamList = {
   Home: undefined,
-  Details: { itemId: number, otherParam?: string }
+  Details: { itemId?: number, otherParam?: string }
 };
 
 type HomeScreenProps = StackScreenProps<StackParamList, 'Home'>;
@@ -19,7 +19,6 @@ function HomeScreen({ navigation } : HomeScreenProps) {
         title="Go to Details" 
         onPress={() => {
           navigation.navigate('Details', {
-            itemId: 86,
             otherParam: 'anything you want here',
           });
         }}
@@ -58,7 +57,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Overview"}} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
