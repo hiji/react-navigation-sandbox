@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {Button, Image, Text, TextInput, View} from 'react-native';
 import {createStackNavigator, StackHeaderTitleProps, StackScreenProps} from "@react-navigation/stack";
 import {NavigationContainer} from "@react-navigation/native";
@@ -20,10 +20,22 @@ function HomeScreen({ route, navigation } : HomeScreenProps) {
       // For example, send the post to the server
     }
   }, [route.params?.post]);
-  
+
+  const [count, setCount] = useState(0);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          title="Update count"
+          onPress={() => setCount(c => c + 1)} />
+      )
+    })
+  })
+
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Text>Home Screen</Text>
+      <Text>Count: {count}</Text>
       <Button 
         title="Go to Details" 
         onPress={() => {
@@ -113,16 +125,10 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{
+          options={({ navigation, route }) => ({
             headerTitle: props => <LogoTitle {...props} />,
-            headerRight: () => (
-              <Button
-                onPress={() => alert('This is a button!')}
-                title="Info"
-                color="#fff"
-              />
-            ),
-          }} />
+          })}
+        />
         <Stack.Screen name="Details" component={DetailsScreen} initialParams={{ itemId: 42 }} />
         <Stack.Screen name="CreatePost" component={CreatePostScreen}/>
       </Stack.Navigator>
